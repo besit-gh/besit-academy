@@ -156,7 +156,8 @@ export function runCommand(state: TerminalState, input: string): TerminalResult 
     case 'nc': return usage(`nc: учебная проверка TCP ${args[args.length - 1] ?? '443'} к ${args[args.length - 2] ?? 'api.internal'}: Connection refused\\nПодсказка: проверь маршрут, firewall и состояние слушающего порта.`);
     case 'git': {
       const sub = args[0];
-      if (sub === 'grep') return usage('src/config.ts:12: TOKEN = process.env.TOKEN\\nУчебная находка: значение секрета не выводится. Проверь, не попал ли секрет в tracked-файл.');\n      if (sub === 'log') return usage('a12bc34 fix: update app config\\n91de234 feat: add health endpoint\\n73ac102 chore: initial service setup');
+      if (sub === 'grep') return usage('src/config.ts:12: TOKEN = process.env.TOKEN\\nУчебная находка: значение секрета не выводится. Проверь, не попал ли секрет в tracked-файл.');
+      if (sub === 'log') return usage('a12bc34 fix: update app config\\n91de234 feat: add health endpoint\\n73ac102 chore: initial service setup');
       if (sub === 'show') return usage('diff --git a/config.yml b/config.yml\\n- port: 8080\\n+ port: 8081\\n\\nУчебный diff: проверь, соответствует ли изменение ожидаемому.');
       if (sub === 'diff') return usage('diff --git a/config.yml b/config.yml\\n- timeout: 30\\n+ timeout: 3\\n\\nУчебный diff: изменение timeout может повлиять на поведение приложения.');
       if (sub === 'status') return usage(' M config.yml\\n?? notes.txt');
