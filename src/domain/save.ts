@@ -3,7 +3,22 @@ import { SAVE_KEY, xpForNextLevel } from './game';
 import { missions } from '../content/missions';
 
 const missionIds = new Set(missions.map((mission) => mission.id));
-const competencyIds = new Set(missions.map((mission) => mission.competency));
+const competencyIds = new Set([
+  'linux-basics',
+  'terminal-navigation',
+  'permissions',
+  'troubleshooting',
+  'network-diagnostics',
+  'git-workflow',
+  'scripting',
+  'containers',
+  'cicd',
+  'infrastructure-as-code',
+  'kubernetes-basics',
+  'security-basics',
+  'observability',
+  'career-readiness',
+]);
 const eventTypes = new Set<GameEvent['type']>([
   'mission_completed',
   'level_up',
