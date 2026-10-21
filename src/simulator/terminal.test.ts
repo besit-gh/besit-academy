@@ -81,7 +81,8 @@ describe('virtual terminal safety and behavior', () => {
 
   it('simulates DevOps tools without running host commands or changing files', () => {
     const state = initialTerminalState();
-    expect(runCommand(state, 'git log --oneline -10').output).toContain('fix: update app config');\n    expect(runCommand(state, 'git grep -n TOKEN').output).toContain('значение секрета не выводится');
+    expect(runCommand(state, 'git log --oneline -10').output).toContain('fix: update app config');
+    expect(runCommand(state, 'git grep -n TOKEN').output).toContain('значение секрета не выводится');
     expect(runCommand(state, 'docker ps -a').output).toContain('api-training');
     expect(runCommand(state, 'terraform plan').output).toContain('1 to destroy');
     expect(runCommand(state, 'kubectl describe pod api').output).toContain('Ready=False');
