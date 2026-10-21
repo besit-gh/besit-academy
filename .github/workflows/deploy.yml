@@ -1,18 +1,14 @@
 name: Build and deploy BESIT ACADEMY
-
 on:
   push:
     branches: [main]
   pull_request:
   workflow_dispatch:
-
 permissions:
   contents: read
-
 concurrency:
   group: pages
   cancel-in-progress: true
-
 jobs:
   quality:
     runs-on: ubuntu-latest
@@ -23,7 +19,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
       - name: Install dependencies
         run: npm install
       - name: Typecheck
@@ -39,7 +34,6 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
-
   deploy:
     if: github.event_name != 'pull_request'
     needs: quality

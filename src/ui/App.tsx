@@ -1,5 +1,5 @@
 import{useEffect,useMemo,useState}from'react';
-import{Activity,ArrowDownRight,ArrowRight,Award,BookOpen,BriefcaseBusiness,Check,ChevronRight,Command,Compass,Download,Flame,GraduationCap,Heart,LockKeyhole,Menu,Network,Play,Search,ShieldCheck,Sparkles,Terminal as TerminalIcon,Trophy,Upload,UserRound,Workflow,X}from'lucide-react';
+import{Activity,ArrowDownRight,ArrowRight,Award,BookOpen,BriefcaseBusiness,Check,ChevronRight,Command,Compass,Download,Flame,GraduationCap,LockKeyhole,Menu,Network,Search,ShieldCheck,Sparkles,Terminal as TerminalIcon,Trophy,Upload,UserRound,X}from'lucide-react';
 import{missions}from'../content/missions';import{awardMission,createProfile,xpForNextLevel}from'../domain/game';import{exportSave,importSave,persistSave,readSave}from'../domain/save';import type{GameEvent,PlayerProfile}from'../domain/types';import{initialTerminalState,runCommand}from'../simulator/terminal';import type{TerminalState}from'../simulator/terminal';
 type Page='overview'|'missions'|'terminal'|'skills'|'portfolio';
 const nav:{id:Page;label:string;icon:typeof Activity}[]=[{id:'overview',label:'Обзор',icon:Compass},{id:'missions',label:'Миссии',icon:BookOpen},{id:'terminal',label:'Терминал',icon:Command},{id:'skills',label:'Навыки',icon:Network},{id:'portfolio',label:'Портфолио',icon:BriefcaseBusiness}];
