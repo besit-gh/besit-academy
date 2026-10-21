@@ -49,6 +49,12 @@ describe('save format', () => {
     expect(importSave(JSON.stringify(invalidEvent))).toMatchObject({ ok: false });
   });
 
+  it('accepts declared competencies even when a branch is not yet a mission reward', () => {
+    const save = validSave();
+    save.profile.unlockedCompetencies = ['linux-basics'];
+    expect(importSave(JSON.stringify(save))).toMatchObject({ ok: true });
+  });
+
   it('accepts a legitimate completed mission and corresponding event', () => {
     const save = validSave();
     save.profile.completedMissionIds = ['first-login'];
