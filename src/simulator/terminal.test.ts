@@ -71,4 +71,23 @@ describe('virtual terminal safety and behavior', () => {
     expect(cleared.output).toBe('\\u0000CLEAR');
     expect(cleared.state.history).toHaveLength(0);
   });
+  it('supports safe read-only diagnostic commands used in lessons', () => {
+    const state = initialTerminalState();
+    expect(runCommand(state, 'tail -n 2 /var/log/app.log').output).toContain('ERROR cannot read');
+    expect(runCommand(state, 'grep -i warn /var/log/app.log').output).toContain('WARN config file missing');
+    expect(runCommand(state, 'dig api.internal').output).toContain('10.20.0.15');
+    expect(runCommand(state, 'nc -vz api.internal 443').output).toContain('Connection refused');
+  });
+
+  it('simulates DevOps tools without running host commands or changing files', () => {
+    const state = initialTerminalState();
+    expect(runCommand(state, 'git log --oneline -10').output).toContain('fix: update app config');
+    expect(runCommand(state, 'docker ps -a').output).toContain('api-training');
+    expect(runCommand(state, 'terraform plan').output).toContain('1 to destroy');
+    expect(runCommand(state, 'kubectl describe pod api').output).toContain('Ready=False');
+    expect(runCommand(state, 'kubectl logs api').output).toContain('ERROR cannot load config');
+    expect(runCommand(state, 'rm -rf /').output).toContain('не поддерживается');
+    expect(runCommand(state, 'docker ps -a').state.files).toEqual(state.files);
+  });
+
 });
