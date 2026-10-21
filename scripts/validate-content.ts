@@ -8,6 +8,9 @@ for (const mission of missions) {
   if (!mission.title.trim() || !mission.summary.trim() || !mission.department.trim()) errors.push(`Миссия ${mission.id}: отсутствуют метаданные`);
   if (!Number.isFinite(mission.xp) || mission.xp <= 0 || mission.xp > 500) errors.push(`Миссия ${mission.id}: XP вне допустимого диапазона`);
   if (!mission.steps.length) errors.push(`Миссия ${mission.id}: нет шагов проверки`);
+  for (const prerequisiteId of mission.prerequisiteMissionIds ?? []) {
+    if (prerequisiteId === mission.id) errors.push(`Миссия ${mission.id}: не может зависеть от самой себя`);
+  }
   const stepIds = new Set<string>();
   for (const step of mission.steps) {
     if (stepIds.has(step.id)) errors.push(`Миссия ${mission.id}: повтор шага ${step.id}`);
@@ -18,6 +21,22 @@ for (const mission of missions) {
     if (new Set(step.options.map((o) => o.id)).size !== step.options.length) errors.push(`Миссия ${mission.id}, шаг ${step.id}: повтор ID варианта`);
   }
 }
+for (const mission of missions) {
+  for (const prerequisiteId of mission.prerequisiteMissionIds ?? []) {
+    if (!ids.has(prerequisiteId)) errors.push(`Миссия ${mission.id}: неизвестная prerequisite-миссия ${prerequisiteId}`);
+  }
+}
+const visiting = new Set<string>();
+const visited = new Set<string>();
+const byId = new Map(missions.map((mission) => [mission.id, mission]));
+const visit = (id: string, path: string[] = []) => {
+  if (visiting.has(id)) { errors.push(`Циклическая зависимость миссий: ${[...path, id].join(' -> ')}`); return; }
+  if (visited.has(id)) return;
+  visiting.add(id);
+  for (const prerequisiteId of byId.get(id)?.prerequisiteMissionIds ?? []) if (byId.has(prerequisiteId)) visit(prerequisiteId, [...path, id]);
+  visiting.delete(id); visited.add(id);
+};
+for (const mission of missions) visit(mission.id);
 if (errors.length) {
   console.error(errors.join('\n'));
   process.exitCode = 1;
