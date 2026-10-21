@@ -1,0 +1,2 @@
+import{describe,expect,it}from'vitest';import{createProfile}from'./game';import{exportSave,importSave}from'./save';
+describe('save format',()=>{it('round-trips a versioned save',()=>{const p=createProfile('Tester');const r=importSave(exportSave(p,[]));expect(r.ok).toBe(true);if(r.ok)expect(r.save.profile.callsign).toBe('Tester');});it('rejects invalid data without mutating state',()=>{expect(importSave('{broken')).toMatchObject({ok:false});expect(importSave(JSON.stringify({schemaVersion:9}))).toMatchObject({ok:false});});});
