@@ -1,6 +1,7 @@
 import type { GameEvent, Mission, PlayerProfile } from './types';
 export const SAVE_KEY='besit-academy.save.v1';
 export const xpForNextLevel=(level:number):number=>100+Math.max(0,level-1)*75;
+export function isMissionAvailable(mission:Mission,completedMissionIds:string[]):boolean{return(mission.prerequisiteMissionIds??[]).every(id=>completedMissionIds.includes(id));}
 export function createProfile(callsign:string):PlayerProfile{return{callsign:callsign.trim().slice(0,24)||'Новичок',level:1,xp:0,completedMissionIds:[],unlockedCompetencies:[],achievementIds:[],favoriteMissionIds:[],updatedAt:new Date().toISOString()};}
 export function awardMission(profile:PlayerProfile,mission:Mission):{profile:PlayerProfile;events:GameEvent[];alreadyCompleted:boolean}{
  if(profile.completedMissionIds.includes(mission.id))return{profile,events:[],alreadyCompleted:true};
