@@ -59,7 +59,7 @@ export function runCommand(state: TerminalState, input: string): TerminalResult 
   const usage = (text: string) => ({ state: next, output: text });
   switch (cmd) {
     case 'help':
-      return usage('Команды: help, pwd, ls [-la], cd, cat, touch, mkdir, chmod, echo, whoami, clear.\nТолько виртуальная файловая система: команды не запускаются в вашей ОС.');
+      return usage('Команды: help, pwd, ls [-la], cd, cat, touch, mkdir, chmod, echo, whoami, tail, grep, dig, nc, git (чтение), docker (чтение), terraform (учебный план), kubectl (чтение), clear.\nТолько виртуальная файловая система: команды не запускаются в вашей ОС.');
     case 'pwd': return usage(state.cwd);
     case 'whoami': return usage('rookie');
     case 'ls': {
@@ -133,6 +133,45 @@ export function runCommand(state: TerminalState, input: string): TerminalResult 
         return usage('');
       }
       return usage(args.join(' '));
+    }
+    case 'tail': {
+      const target = args[args.length - 1];
+      const path = normalize(target ?? '', state.cwd);
+      if (!target || !next.files[path]) return usage(`tail: файл не найден: ${target ?? ''}`);
+      const nIndex = args.indexOf('-n');
+      const count = nIndex >= 0 ? Math.max(1, Number(args[nIndex + 1]) || 10) : 10;
+      return usage(next.files[path].split('\\n').slice(-count).join('\\n'));
+    }
+    case 'grep': {
+      const ignoreCase = args.includes('-i');
+      const target = args[args.length - 1];
+      const pattern = args.filter(a => a !== '-i' && a !== target).join(' ');
+      const path = normalize(target ?? '', state.cwd);
+      if (!target || !next.files[path]) return usage(`grep: файл не найден: ${target ?? ''}`);
+      const needle = ignoreCase ? pattern.toLowerCase() : pattern;
+      return usage(next.files[path].split('\\n').filter(line => (ignoreCase ? line.toLowerCase() : line).includes(needle)).join('\\n'));
+    }
+    case 'dig': return usage(`; <<>> DiG 9.18 (учебный ответ) <<>> ${args[0] ?? 'api.internal'}\\n;; ANSWER SECTION:\\napi.internal. 60 IN A 10.20.0.15\\n\\n;; Симуляция: ответ DNS не доказывает доступность TCP-порта.`);
+    case 'nc': return usage(`nc: учебная проверка TCP ${args[args.length - 1] ?? '443'} к ${args[args.length - 2] ?? 'api.internal'}: Connection refused\\nПодсказка: проверь маршрут, firewall и состояние слушающего порта.`);
+    case 'git': {
+      const sub = args[0];
+      if (sub === 'log') return usage('a12bc34 fix: update app config\\n91de234 feat: add health endpoint\\n73ac102 chore: initial service setup');
+      if (sub === 'show') return usage('diff --git a/config.yml b/config.yml\\n- port: 8080\\n+ port: 8081\\n\\nУчебный diff: проверь, соответствует ли изменение ожидаемому.');
+      if (sub === 'diff') return usage('diff --git a/config.yml b/config.yml\\n- timeout: 30\\n+ timeout: 3\\n\\nУчебный diff: изменение timeout может повлиять на поведение приложения.');
+      if (sub === 'status') return usage(' M config.yml\\n?? notes.txt');
+      return usage('Учебный git поддерживает только чтение: git log, git show, git diff, git status.');
+    }
+    case 'docker': {
+      if (args[0] === 'image' && args[1] === 'ls') return usage('REPOSITORY       TAG       IMAGE ID       SIZE\\nbesit/api        latest    a1b2c3d4e5f6   82MB');
+      if (args[0] === 'ps') return usage('CONTAINER ID   IMAGE        STATUS                     NAMES\\nabc123         besit/api    Exited (1) 2 minutes ago   api-training');
+      if (args[0] === 'volume') return usage('DRIVER    VOLUME NAME\\nlocal     api-data');
+      return usage('Учебный docker поддерживает только безопасный просмотр: docker image ls, docker ps -a, docker volume ls.');
+    }
+    case 'terraform': return usage('Учебный план: 1 to add, 0 to change, 1 to destroy.\\nВнимание: обнаружено неожиданное уничтожение ресурса. Не применяй план до выяснения причины.');
+    case 'kubectl': {
+      if (args[0] === 'logs') return usage('INFO starting api\\nERROR cannot load config /etc/besit/app.conf');
+      if (args[0] === 'describe') return usage('Status: Running\\nConditions: Ready=False\\nEvents: Readiness probe failed: HTTP probe failed with statuscode: 503');
+      return usage('Учебный kubectl поддерживает только чтение: kubectl describe pod <имя>, kubectl logs <pod>.');
     }
     case 'clear': return { state: { ...next, history: [] }, output: '\\u0000CLEAR' };
     default: return usage(`Команда «${cmd}» не поддерживается. Ничего не выполнялось в вашей ОС.`);
