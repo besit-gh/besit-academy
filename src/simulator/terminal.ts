@@ -59,7 +59,7 @@ export function runCommand(state: TerminalState, input: string): TerminalResult 
   const usage = (text: string) => ({ state: next, output: text });
   switch (cmd) {
     case 'help':
-      return usage('Команды: help, pwd, ls [-la], cd, cat, touch, mkdir, chmod, echo, whoami, tail, grep, dig, nc, git (чтение), docker (чтение), terraform (учебный план), kubectl (чтение), clear.\nТолько виртуальная файловая система: команды не запускаются в вашей ОС.');
+      return usage('Команды: help, pwd, ls [-la], cd, cat, touch, mkdir, chmod, echo, printf, whoami, tail, grep, dig, nc, git (чтение), docker (чтение), terraform (учебный план), kubectl (чтение), clear.\nТолько виртуальная файловая система: команды не запускаются в вашей ОС.');
     case 'pwd': return usage(state.cwd);
     case 'whoami': return usage('rookie');
     case 'ls': {
